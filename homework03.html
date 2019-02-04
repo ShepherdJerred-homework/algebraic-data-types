@@ -1,0 +1,193 @@
+<html>
+  <head>
+    <meta charset="utf-8"/>
+    <title>Comp 475 Homework</title>
+    <link rel="stylesheet" href="../standard.css" type="text/css"/>
+    <base target="_top"/>
+    <style>
+      ol > li { margin-bottom: 4em; }
+      .prime { margin-left: -0.2ex; margin-right: -0.4ex; }
+    </style>
+  </head>
+  <body>
+    Write a Haskell module named <code>Position</code>.  You are to export the
+    following elements.
+    <ol class="spaced">
+      <li>
+        A type named <code>Point</code> that has two members of
+        type <code>Double</code> (an x and y coordinate).  Since there is only
+        one constructor, you can name the constructor <code>Point</code>.  Use
+        the default implementation of the <code>Show</code>
+        and <code>Read</code> typeclasses.
+      </li>
+      <li>
+        A type named <code>Vector</code> that has two members of
+        type <code>Double</code> (an x and y quantity).  Since there is only
+        one constructor, you can name the constructor <code>Vector</code>.
+        Use the default implementation of the <code>Show</code>
+        and <code>Read</code> typeclasses.
+      </li>
+      <li>
+        A function named <code>move</code> that takes a point and a vector.
+        It should return a new point which is the original point moved by the
+        vector.
+        <pre>
+p<span class="prime">&prime;</span><sub>x</sub> = p<sub>x</sub> + v<sub>x</sub>
+p<span class="prime">&prime;</span><sub>y</sub> = p<sub>y</sub> + v<sub>y</sub>
+</pre>
+        <pre class="console">
+ghci&gt; <span class="input">move (Point 3 4) (Vector 10 20)</span>
+Point 13.0 24.0
+</pre>
+      </li>
+      <li>
+        A function named <code>scale</code> that takes a vector and a double.
+        Scale the vector by the number.
+        <pre>
+v<span class="prime">&prime;</span><sub>x</sub> = v<sub>x</sub> * n
+v<span class="prime">&prime;</span><sub>y</sub> = v<sub>y</sub> * n
+</pre>
+        <pre class="console">
+ghci&gt; <span class="input">scale (Vector 3 4) 5</span>
+Vector 15.0 20.0
+</pre>
+      </li>
+      <li>
+        A function named <code>rotate</code> that takes a vector and a double.
+        Rotate the vector the number of degrees specified by the number.
+        <pre>
+v<span class="prime">&prime;</span><sub>x</sub> = v<sub>x</sub> * cos&theta; - v<sub>y</sub> * sin&theta;
+v<span class="prime">&prime;</span><sub>y</sub> = v<sub>x</sub> * sin&theta; + v<sub>y</sub> * cos&theta;
+</pre>
+        <pre class="console">
+ghci&gt; <span class="input">rotate (Vector 3 4) 90</span>
+Vector (-4.0) 3.0000000000000004
+</pre>
+        <ul>
+          <li>
+            Note that the Haskell <code>sin</code> and <code>cos</code>
+            functions take angles in radians, but your function should take
+            angles in degrees because radians are gross.  (So convert the
+            degrees to radians before calling <code>sin</code>
+            or <code>cos</code>.)
+          </li>
+          <li>
+            You should expect to have a tiny bit of floating-point rounding
+            error in your output &mdash; such as in the above example where
+            the y coordinate is <code>3.0000000000000004</code> instead
+            of <code>3.0</code>.
+          </li>
+        </ul>
+      </li>
+      <li>
+        A type named <code>Position</code> that has two members:
+        a <code>Point</code> and a <code>Vector</code> (a location and a
+        direction).  Since there is only one constructor, you can name the
+        constructor <code>Position</code>.  Use the default implementation of
+        the <code>Show</code> and <code>Read</code> typeclasses.
+        <p>
+          You should use the record syntax to name your
+          members <code>loc</code> and <code>dir</code> so that you can access
+          them using a &ldquo;getter&rdquo;.
+        </p>
+      </li>
+      <li>
+        A variable named <code>origin</code> that is a position where the
+        location is <code>(0, 0)</code> and the direction is <code>(0,
+          1)</code>
+        <pre class="console">
+ghci&gt; <span class="input">loc origin</span>
+Point 0.0 0.0
+ghci&gt; <span class="input">dir origin</span>
+Vector 0.0 1.0
+</pre>
+      </li>
+      <li>
+        A type named <code>Command</code>.  There are five different possible
+        forms of a command:
+        <ul>
+          <li>
+            <code>Forward <var>dist</var></code> &mdash; move forward in
+            direction currently facing by specified distance (distance is a
+            double)
+          </li>
+          <li>
+            <code>Left <var>deg</var></code> &mdash; turn left by specified
+            number of degrees (degrees is a double)
+          </li>
+          <li>
+            <code>Right <var>deg</var></code> &mdash; turn right by specified
+            number of degrees (degrees is a double)
+          </li>
+          <li>
+            <code>Face <var>dir</var></code> &mdash; change to specified
+            direction (direction is a vector)
+          </li>
+          <li>
+            <code>Goto <var>loc</var></code> &mdash; change to specified
+            location (location is a point)
+          </li>
+        </ul>
+        Use these command names as the constructor names. Use the default
+        implementation of the <code>Show</code> and <code>Read</code>
+        typeclasses.
+      </li>
+      <li>
+        A function named <code>execute</code> that takes a command and a
+        position, then returns the new position after executing the command
+        <pre class="console">
+ghci&gt; <span class="input">execute (Forward 5) origin</span>
+Position {loc = Point 0.0 5.0, dir = Vector 0.0 1.0}
+ghci&gt; <span class="input">execute (Left 90) origin</span>
+Position {loc = Point 0.0 0.0, dir = Vector (-1.0) 6.123233995736766e-17}
+ghci&gt; <span class="input">execute (Forward 10) $ execute (Right 45) origin</span>
+Position {loc = Point 7.071067811865475 7.0710678118654755, dir = Vector 0.7071067811865475 0.7071067811865476}
+ghci&gt; <span class="input">execute (Face $ Vector 1 0) $ execute (Goto $ Point 3 9) origin</span>
+Position {loc = Point 3.0 9.0, dir = Vector 1.0 0.0}
+</pre>
+        <ul>
+          <li>
+            When moving you may assume that your direction is a unit vector;
+            therefore all you need to do is <code>scale</code> the direction
+            by the specified amount and then <code>move</code> the location by
+            the resulting vector
+          </li>
+          <li>
+            The <code>rotate</code> function rotates to the left; therefore to
+            turn to the right you will have to use the negative of the angle
+            (<code>Right 90 &equiv; Left -90</code>).
+          </li>
+        </ul>
+      </li>
+      <li>
+        A function named <code>executeAll</code> that takes a list of commands
+        and a position, then returns the new position after executing all the
+        commands in order
+        <pre class="console">
+ghci&gt; <span class="input">:{</span>
+ghci| <span class="input">executeAll [</span>
+ghci| <span class="input">    Goto $ Point 10 10,</span>
+ghci| <span class="input">    Right 90,</span>
+ghci| <span class="input">    Forward 6</span>
+ghci| <span class="input">  ] origin</span>
+ghci| <span class="input">:}</span>
+Position {loc = Point 16.0 10.0, dir = Vector 1.0 6.123233995736766e-17}
+</pre>
+      </li>
+      <li>
+        A function named <code>knight</code> that takes a position and
+        modifies it by executing the following commands:
+        <ul>
+          <li><code>Right 90</code></li>
+          <li><code>Forward 10</code></li>
+          <li><code>Left 90</code></li>
+          <li><code>Forward 20</code></li>
+        </ul>
+        <pre class="console">
+ghci&gt; knight origin
+Position {loc = Point 10.0 20.0, dir = Vector 0.0 1.0}
+</pre>
+      </li>
+    </ol>
+  </body>
+</html>
